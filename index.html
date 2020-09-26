@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Instagram Post Generator</title>
+    
+    <link rel="stylesheet" href="https://use.typekit.net/erm4tbu.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main id="app">
+
+        <img class="logo" src="images/full-logo.svg">
+
+        <aside class="left">
+
+            <div class="inputs">
+                <input v-model="post.username" placeholder="Username" type="text">
+                <div class="checkbox">
+                    <input v-model="post.verified" id="verified" type="checkbox">
+                    <label for="verified">Verified</label>
+                </div>
+
+                <hr>
+
+                <input @change="setArticleImage" type="file" accept="image/x-png,image/gif,image/jpeg">
+                <div class="buttons">
+                    <button @click="article.image = 'https://dummyimage.com/1/800000/800000.jpg'; article.invert = true" class="red">Red</button>
+                    <button @click="article.image = 'https://dummyimage.com/1/000/000.jpg'; article.invert = true" class="black">Black</button>
+                    <button @click="article.image = 'https://dummyimage.com/1/fff/fff.jpg'; article.invert = false" class="white">White</button>
+                </div>
+                <textarea-autosize placeholder="Headline" rows="1" v-model="article.headline"></textarea-autosize>
+                <div class="radios">
+                    <div class="radio">
+                        <input v-model="article.position" value="top" id="top" type="radio">
+                        <label for="top">Top</label>
+                    </div>
+                    <div class="radio">
+                        <input v-model="article.position" value="bottom" id="bottom" type="radio">
+                        <label for="bottom">Bottom</label>
+                    </div>
+                </div>
+                <div class="checkbox">
+                    <input v-model="article.invert" id="invert" type="checkbox">
+                    <label for="invert">Invert</label>
+                </div>
+            </div>
+
+        </aside>
+
+        <aside class="right">
+
+            <input v-model="article.zoom" value="100" min="100" max="200" type="range" class="zoom">
+
+            <div :class="{ inverted : article.invert }" class="instagram-post">
+
+                <div class="post-top">
+                    <div class="post-top-left">
+                        <img class="avatar" v-bind:src="post.avatar">
+                        <div class="username-wrapper">
+                            <span class="username">{{ post.username | username }}</span>
+                            <img v-if="post.verified" class="verified" src="images/badge.png">
+                        </div>
+                    </div>
+                    <div class="post-top-right">
+                        <img class="icon" src="images/more.svg">
+                    </div>
+                </div>
+
+                <div class="post-content">
+                    <img :class="article.position" src="images/logo.svg">
+                    <h1 :class="article.position">{{ article.headline }}</h1>
+                    <div class="post-image" :style="{backgroundImage: `url(${article.image})`, backgroundSize: `auto ${article.zoom}%`}"></div>
+                </div>
+
+                <div class="post-bottom">
+                    <div class="post-bottom-left">
+                        <img v-if="post.liked" @click="post.liked = !post.liked" class="icon liked" src="images/like-filled.svg">
+                        <img v-else @click="post.liked = !post.liked" class="icon" src="images/like.svg">
+                        <img class="icon" src="images/comment.svg">
+                        <img class="icon" src="images/direct-message.svg">
+                    </div>
+                    <div class="post-bottom-right">
+                        <img class="icon" src="images/save.svg">
+                    </div>
+                </div>
+                
+                <div class="post-comments">
+                    <p class="post-caption">
+                        <span class="username">{{ post.username | username }}</span>
+                        {{ article.headline }}
+                    </p>
+                    <p class="more-comments" @click="post.comments = Math.round( Math.random() * 10 ) + 1">
+                        View {{ post.comments !== 1 ? 'all' : '' }} {{ post.comments }} comment{{ post.comments !== 1 ? 's' : '' }}
+                    </p>
+                </div>
+
+            </div>
+
+        </aside>
+
+        <button @click="downloadImage" class="download">
+            <span v-bind:class="[ article.zoom > 130 ? 'lowres' : '' ]">{{ status }}</span>
+        </button>
+
+    </main>
+    
+    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-textarea-autosize@1.1.1/dist/vue-textarea-autosize.umd.min.js"></script>
+    <script src="https://unpkg.com/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
